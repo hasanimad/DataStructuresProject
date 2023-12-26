@@ -50,11 +50,11 @@ typedef struct QueueIter {
 
 // New Nodes constructor
 pQueueEntry __newQueueEntry(char* data){
-    DEBUG_INFO("Entering __newQueueEntry function...\n");
+    DEBUG_INFO("Entering __newQueueEntry function\n");
     pQueueEntry newEntry = (pQueueEntry)malloc(sizeof(*newEntry));
     if(newEntry == NULL){
         DEBUG_ERROR("Failed to allocate %lld for the new node\n", sizeof(*newEntry));
-        DEBUG_INFO("Exiting __newQueueEntry function...");
+        DEBUG_INFO("Exiting __newQueueEntry function...\n");
         return newEntry;
     }
     DEBUG_OKAY("Allocated %lld bytes for the new node at 0x%p\n", sizeof(*newEntry), newEntry);
@@ -62,22 +62,23 @@ pQueueEntry __newQueueEntry(char* data){
     if(newEntry->data == NULL){
         DEBUG_ERROR("Failed to allocate %lld bytes for the data in the new node\n", strlen(data)+1);
         free((void*)newEntry);
-        DEBUG_INFO("Exiting __newQueueEntry function...");
+        DEBUG_INFO("Exiting __newQueueEntry function...\n");
         return newEntry;
     }
+    DEBUG_OKAY("Allocated %lld bytes for the new node data at 0x%p\n", strlen(data)+1, newEntry->data);
 
     strcpy(newEntry->data, data);
     newEntry->index = 0;
     newEntry->__next = NULL;
     newEntry->__prev = NULL;
     DEBUG_OKAY("Set up the new node at 0x%p\n", newEntry);
-    DEBUG_INFO("Exiting __newQueueEntry function...");
+    DEBUG_INFO("Exiting __newQueueEntry function...\n");
     return newEntry;
 }
 
 // Go to the next queue entry - For the iterator
 pQueueEntry __QueueIterNext(pQueueIter self) {
-    DEBUG_INFO("Entering __QueueIterNext Function...\n");
+    DEBUG_INFO("Entering __QueueIterNext Function\n");
 
     // Making a pointer to the queue head which is pointed to in the iterator
     pQueueEntry retVal = self->__current;
@@ -85,9 +86,9 @@ pQueueEntry __QueueIterNext(pQueueIter self) {
     DEBUG_INFO("Retrieved the queue head for the iterator at 0x%p\n", retVal);
 
     // Checking if the current is NULL to avoid a NULL pointer
-    if (retVal != NULL) {
+    if (self->__current != NULL) {
         // Point to the next entry in the queue (Following it down from the head)
-        retVal = retVal->__next;
+        self->__current = self->__current->__next;
     }
 
     DEBUG_INFO("Exiting __QueueIterNext Function...\n");
@@ -97,7 +98,7 @@ pQueueEntry __QueueIterNext(pQueueIter self) {
 
 // Delete the iterator aka free it from the memory
 void __QueueIterDel(pQueueIter self) {
-    DEBUG_INFO("Entring __QueueIterDel Function...\n");
+    DEBUG_INFO("Entring __QueueIterDel Function\n");
 
     // Free the iterator from the memory
     DEBUG_INFO("Freeing the Iterator at 0x%p\n\t\\___ Size: %lld\n", self, sizeof(*self));
@@ -109,7 +110,7 @@ void __QueueIterDel(pQueueIter self) {
 
 // Constructor for the queue iterator
 pQueueIter __newQueueIter(pQueue Queue) {
-    DEBUG_INFO("Entered __newQueueIter Function...\n");
+    DEBUG_INFO("Entered __newQueueIter Function\n");
     // Allocate enough memory for the iterator - 24 bytes
     pQueueIter newIter = (pQueueIter)malloc(sizeof(*newIter));
 
@@ -135,7 +136,7 @@ pQueueIter __newQueueIter(pQueue Queue) {
 
 // A helper function to find an entry with a given index - Time Complexity: O(n)
 pQueueEntry __QueueFind(pQueue self, int index){
-    DEBUG_INFO("Entered __QueueFind Function...\n");
+    DEBUG_INFO("Entered __QueueFind Function\n");
 
     // Start searching from the queue head
     pQueueEntry current = self->Queue->__head;
@@ -153,7 +154,7 @@ pQueueEntry __QueueFind(pQueue self, int index){
 
 // Diagnostic dump of the queue
 void __QueueDump(pQueue self){
-    DEBUG_INFO("Entered __QueueDump Function...\n");
+    DEBUG_INFO("Entered __QueueDump Function\n");
     if(self == NULL){
         DEBUG_ERROR("Passed in a NULL pointer\n");
         DEBUG_INFO("Exiting __QueueDump...\n");
@@ -169,7 +170,7 @@ void __QueueDump(pQueue self){
 
 // Add a node to the head of the queue - Time Complexity O(n)
 void __putHead(pQueue self, char* data){
-    DEBUG_INFO("Entered __putHead function...\n");
+    DEBUG_INFO("Entered __putHead function\n");
     // Initialize the new node
     pQueueEntry newEntry = __newQueueEntry(data);
     self->Queue->__count++;
@@ -194,7 +195,7 @@ void __putHead(pQueue self, char* data){
 
 // Add a node to the end of the queue - Time complexity O(1)
 void __putTail(pQueue self, char* data){
-    DEBUG_INFO("Entered __putTail function...\n");
+    DEBUG_INFO("Entered __putTail function\n");
     // Initialize the new node
     pQueueEntry newEntry = __newQueueEntry(data);
 
@@ -219,7 +220,7 @@ void __putTail(pQueue self, char* data){
 
 // helper function for __updateData
 void __updateDataOrdered(pQueue self, int index, char* data) {
-    DEBUG_INFO("Entered __updateDataOrdered function...\n");
+    DEBUG_INFO("Entered __updateDataOrdered function\n");
     // Check if anything needed is null
     if (!self || !data) return;
     // Initialize the new Node
@@ -258,7 +259,7 @@ void __updateDataOrdered(pQueue self, int index, char* data) {
 }
 // Update the node at the given index, if not found create one and insert at the right index - Time Complexity O(n)
 void __updateData(pQueue self, int index, char* data) {
-    DEBUG_INFO("Entered __updateData function...\n");
+    DEBUG_INFO("Entered __updateData function\n");
     if (!self || !data) return;
     pQueueEntry newNode = __QueueFind(self, index);
     size_t newDataSize = strlen(data);
@@ -276,7 +277,7 @@ void __updateData(pQueue self, int index, char* data) {
 }
 // Get the data at the given index - TC O(n)
 char* __getQueue(pQueue self, int index, char* def){
-    DEBUG_INFO("Entered __getQueue function...\n");
+    DEBUG_INFO("Entered __getQueue function\n");
     pQueueEntry toFind = __QueueFind(self, index);
     if(toFind == NULL) {
         DEBUG_ERROR("Didn't find the required node\n");
@@ -289,7 +290,7 @@ char* __getQueue(pQueue self, int index, char* def){
 }
 // Get the data in the head of the queue - TC O(1)
 char* __getHead(pQueue self, char* def){
-    DEBUG_INFO("Entered __getHead function...\n");
+    DEBUG_INFO("Entered __getHead function\n");
     if(self->Queue->__head == NULL) {
         DEBUG_ERROR("Queue head is NULL\n");
         DEBUG_INFO("Exiting __getHead function...\n");
@@ -301,7 +302,7 @@ char* __getHead(pQueue self, char* def){
 }
 // Get the data in the tail of the queue - TC O(1)
 char* __getTail(pQueue self, char* def){
-    DEBUG_INFO("Entered __getTail function...\n");
+    DEBUG_INFO("Entered __getTail function\n");
     if(self->Queue->__tail == NULL) {
         DEBUG_ERROR("Queue tail is NULL\n");
         DEBUG_INFO("Exiting __getTail function...");
@@ -313,7 +314,7 @@ char* __getTail(pQueue self, char* def){
 }
 // Dequeue the head of the queue - TC O(1)
 char* __delHead(pQueue self, char* def){
-    DEBUG_INFO("Entered __delHead function (dequeue)...\n");
+    DEBUG_INFO("Entered __delHead function (dequeue)\n");
     // Get the data inside the head
     char* retData = __getHead(self, def);
     // Check if it is the default value
@@ -336,10 +337,10 @@ int __sizeQueue(pQueue self){
 }
 // Free the queue from memory - deleting it - TC O(1)
 void __delQueue(pQueue self){
-    DEBUG_INFO("Entered __delQueue function...\n");
+    DEBUG_INFO("Entered __delQueue function\n");
     pQueueEntry current, next;
     current = self->Queue->__head;
-    DEBUG_OKAY("Got a pointer to the head...\n\t\\___ Deleting nodes...\n");
+    DEBUG_OKAY("Got a pointer to the head\n\t\\___ Deleting nodes...\n");
     while(current != NULL){
         next = current->__next;
         free((void*) current->data);
@@ -352,7 +353,7 @@ void __delQueue(pQueue self){
 }
 // Function to iterate through the queue - TC O(n)
 void __QueueIterate(pQueue Queue) {
-    DEBUG_INFO("Entered __QueueIterate function...\n");
+    DEBUG_INFO("Entered __QueueIterate function\n");
     pQueueIter iter = __newQueueIter(Queue);
     pQueueEntry entry;
     while ((entry = iter->next(iter)) != NULL) {
@@ -365,7 +366,7 @@ void __QueueIterate(pQueue Queue) {
 }
 // Queue constructor
 pQueue newQueue(){
-    DEBUG_INFO("Entered newQueue function...\n");
+    DEBUG_INFO("Entered newQueue function\n");
     // Allocating enough memory for the queue skeletal object
     pQueue newQueue = (pQueue)malloc(sizeof(*newQueue));
     if(newQueue == NULL) {
@@ -387,7 +388,7 @@ pQueue newQueue(){
     newQueue->Queue->__count = 0;
     newQueue->Queue->__head = NULL;
     newQueue->Queue->__tail = NULL;
-    DEBUG_OKAY("Initialized the queue with default values...\n");
+    DEBUG_OKAY("Initialized the queue with default values\n");
 
     // Linking the functions to the function pointers
     newQueue->updateData = &__updateData;
@@ -404,7 +405,7 @@ pQueue newQueue(){
     newQueue->iterQueue = &__QueueIterate;
     newQueue->dumpQueue = &__QueueDump;
     newQueue->delQueue = &__delQueue;
-    DEBUG_OKAY("Linked the functions to the Queue...\n");
+    DEBUG_OKAY("Linked the functions to the Queue\n");
 
     DEBUG_INFO("Exiting newQueue function...\n");
     return newQueue;

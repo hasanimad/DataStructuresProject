@@ -8,7 +8,7 @@
 #pragma ide diagnostic ignored "bugprone-reserved-identifier"
 
 
-#define DEBUG
+//#define DEBUG
 
 typedef struct Queue *pOGQueue;
 typedef struct QueueEntry QueueEntry, *pQueueEntry;
