@@ -8,19 +8,18 @@
  * (Done) TODO Implement the dequeue function
  * (Done) TODO Implement the updateData function in an ordered manner
  * (DONE) TODO Check the iterate function, cause it looks wonky
- * TODO Implement the Undo Function
+ * (DONE) TODO Implement the Undo Function
+ * TODO Link the undo function with the Queue
  * TODO Implement the Interface for the application
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "Headers/Queue.h"
-// testing grounds
+#include "Headers/ActionUndo.h"
+
 int main() {
-    pQueue testQueue = newQueue();
-    testQueue->enqueueData(testQueue, "Data 0x0");
-    testQueue->enqueueData(testQueue, "Data 0x1");
-    testQueue->iterQueue(testQueue);
-    testQueue->delQueue(testQueue);
+
+
     return 0;
 }
