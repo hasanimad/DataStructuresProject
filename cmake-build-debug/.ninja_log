@@ -1,0 +1,8 @@
+# ninja log v5
+8	70	7250263387772872	CMakeFiles/DataStructuresProject.dir/HeadersImplementation/Map.c.obj	33753abd630a0383
+56	177	7252385274784840	DataStructuresProject.exe	416a803053c89d63
+2	84	7252385006905009	CMakeFiles/DataStructuresProject.dir/HeadersImplementation/Queue.c.obj	d9e7df442d3aa462
+2	80	7252383890749346	CMakeFiles/DataStructuresProject.dir/main.c.obj	eeedb585536f934b
+1	200	7252733669233693	build.ninja	6b566d7eeaeb811
+10	110	7252362259855390	CMakeFiles/DataStructuresProject.dir/HeadersImplementation/ActionUndo.c.obj	77568a5deb43a8ae
+2	55	7252385273591605	CMakeFiles/DataStructuresProject.dir/HeadersImplementation/QueueIterator.c.obj	2822c782aec3a9b4
