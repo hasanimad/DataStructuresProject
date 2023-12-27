@@ -272,7 +272,7 @@ int __updateData(pQueue self, int index, char* data, bool inc) {
         DEBUG_INFO("Found the needed node\n");
         free((void *) newNode->data);
         newNode->data = (char *) malloc(newDataSize + 1);
-        strcpy_s(newNode->data, newDataSize + 1, data);
+        strcpy(newNode->data, data);
         DEBUG_INFO("Exiting __updateData function...\n");
         return newNode->index;
     }
