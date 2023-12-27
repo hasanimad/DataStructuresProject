@@ -12,7 +12,7 @@
  * (DONE) TODO Link the undo function with the Queue
  * (DONE) TODO Implement the delete function in the Queue
  * (DONE) TODO Implement the numeric Interface for the application
- * TODO Implement the text Interface for the application
+ * (DONE) TODO Implement the text Interface for the application
  * TODO Add comments explaining what tf does this code do, sincerely
  * TODO Cleanup the code and add DEBUG statements all over it
  */
