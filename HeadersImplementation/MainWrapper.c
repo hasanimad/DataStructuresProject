@@ -61,7 +61,7 @@ void printMenu() {
 }
 
 void __toLowerString(char *string) {
-    for (char *p = string; *p; ++p) *p = *p > 0x40 && *p < 0x5b ? *p | 0x60 : *p;
+    for (unsigned char *p = string; *p; ++p) *p = *p > 0x40 && *p < 0x5b ? *p | 0x60 : *p;
 }
 
 char **__inputSplitter(char *userInput) {
@@ -72,7 +72,7 @@ char **__inputSplitter(char *userInput) {
     for (int i = 0; i < 3; i++) {
         userInputSplit[i] = NULL;
     }
-    char *tempInput = (char *) malloc(strlen(userInput));
+    char *tempInput = (char *) malloc(strlen(userInput)+1);
     if (!tempInput) {
         free(userInputSplit);
         return NULL;
