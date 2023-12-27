@@ -11,4 +11,8 @@ add_executable(DataStructuresProject main.c
         Headers/ActionUndo.h
         HeadersImplementation/ActionUndo.c
         Headers/strux.h
+        Headers/MainWrapper.h
+        HeadersImplementation/MainWrapper.c
+        Headers/ActionUndoLink.h
+        HeadersImplementation/ActionUndoLink.c
 )

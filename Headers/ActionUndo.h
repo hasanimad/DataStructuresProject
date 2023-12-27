@@ -5,8 +5,7 @@
 #ifndef DATASTRUCTURESPROJECT_ACTIONUNDO_H
 #define DATASTRUCTURESPROJECT_ACTIONUNDO_H
 
-#define DEBUG
-enum actionDone {INSERT, DELETE};
+typedef enum actionDone {INSERT, MODIFY, DELETE} ActionDone, *pActionDone;
 typedef struct ActionOG *pActionOG;
 
 typedef struct Action{
@@ -22,6 +21,9 @@ typedef struct ActionStack *pActionStackOG;
 
 typedef struct ActionStackImpl{
     pActionStackOG __actionStack;
+    int (*getTopIndex)(struct ActionStackImpl* self);
+    char* (*getTopData)(struct ActionStackImpl* self, char* def);
+    enum actionDone (*getTopAction)(struct ActionStackImpl* self);
     void (*push)(struct ActionStackImpl* self, pAction action);
     pAction (*pop)(struct ActionStackImpl* self);
     void (*delStack)(struct ActionStackImpl* self);

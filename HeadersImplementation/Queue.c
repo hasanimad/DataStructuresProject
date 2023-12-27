@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "../Headers/Queue.h"
 #include "../Headers/strux.h"
 
@@ -169,7 +170,7 @@ void __QueueDump(pQueue self){
 }
 
 // Add a node to the head of the queue - Time Complexity O(n)
-void __putHead(pQueue self, char* data){
+int __putHead(pQueue self, char* data, bool inc){
     DEBUG_INFO("Entered __putHead function\n");
     // Initialize the new node
     pQueueEntry newEntry = __newQueueEntry(data);
@@ -178,11 +179,11 @@ void __putHead(pQueue self, char* data){
     if(self->Queue->__head == NULL){
         self->Queue->__head = newEntry;
         self->Queue->__tail = newEntry;
-        return;
+        return self->Queue->__head->index;
     }
 
     // Increment the index of the OG head and the following nodes
-    for(pQueueEntry cur = self->Queue->__head; cur != NULL; cur = cur->__next){
+    for(pQueueEntry cur = self->Queue->__head; cur != NULL && inc; cur = cur->__next){
         cur->index++;
     }
     // Link the new Node to the head
@@ -191,10 +192,11 @@ void __putHead(pQueue self, char* data){
     self->Queue->__head = newEntry;
     DEBUG_OKAY("Linked the new Node\n");
     DEBUG_INFO("Exiting __putHead function...\n");
+    return self->Queue->__head->index;
 }
 
 // Add a node to the end of the queue - Time complexity O(1)
-void __putTail(pQueue self, char* data){
+int __putTail(pQueue self, char* data){
     DEBUG_INFO("Entered __putTail function\n");
     // Initialize the new node
     pQueueEntry newEntry = __newQueueEntry(data);
@@ -206,7 +208,7 @@ void __putTail(pQueue self, char* data){
         self->Queue->__head = newEntry;
         self->Queue->__tail = newEntry;
         DEBUG_OKAY("The Queue is empty\n\t\\___ Linked the head and tail to the new node\n");
-        return;
+        return newEntry->index;
     }
     // If the queue is not empty
     newEntry->index = self->Queue->__tail->index + 1;
@@ -216,23 +218,24 @@ void __putTail(pQueue self, char* data){
     self->Queue->__tail = newEntry;
     DEBUG_OKAY("Linked the new node to the tail\n");
     DEBUG_INFO("Exiting the __putTail function...\n");
+    return self->Queue->__tail->index;
 }
 
 // helper function for __updateData
-void __updateDataOrdered(pQueue self, int index, char* data) {
+int __updateDataOrdered(pQueue self, int index, char* data, bool inc) {
     DEBUG_INFO("Entered __updateDataOrdered function\n");
+    DEBUG_INFO("Queue: 0x%p\n\t\\___ Index: %d\n\t\\___ Data: %s\n",self ,index, data);
     // Check if anything needed is null
-    if (!self || !data) return;
+    if (!self || !data) return -1;
     // Initialize the new Node
     pQueueEntry newNode = __newQueueEntry(data);
     self->Queue->__count++;
+    DEBUG_INFO("Incremented the queue count\n");
     // Check if the index is the head
     if(index == 0){
-        newNode->__next = self->Queue->__head;
-        self->Queue->__head->__prev = newNode;
-        self->Queue->__head = newNode;
+        __putHead(self, data, inc);
         DEBUG_OKAY("Added the new Node to the head\n");
-        return;
+        return index;
     }
     // Search for the right place to insert the new Node
     pQueueEntry cur = self->Queue->__head;
@@ -256,11 +259,13 @@ void __updateDataOrdered(pQueue self, int index, char* data) {
     cur->__next = newNode;
     DEBUG_OKAY("Linked the new node in it's right place\n\t\\___ Next Node: %d\n\t\\___ Previous Node: %d\n", cur->__next->index, cur->__prev->index);
     DEBUG_INFO("Exiting __updateDataOrdered function...\n");
+    return newNode->index;
 }
 // Update the node at the given index, if not found create one and insert at the right index - Time Complexity O(n)
-void __updateData(pQueue self, int index, char* data) {
+int __updateData(pQueue self, int index, char* data, bool inc) {
     DEBUG_INFO("Entered __updateData function\n");
-    if (!self || !data) return;
+    DEBUG_INFO("Queue: 0x%p\n\t\\___ Index: %d\n\t\\___ Data: %s\n",self ,index, data);
+    if (!self || !data) return -1;
     pQueueEntry newNode = __QueueFind(self, index);
     size_t newDataSize = strlen(data);
     if (newNode != NULL) {
@@ -269,11 +274,12 @@ void __updateData(pQueue self, int index, char* data) {
         newNode->data = (char *) malloc(newDataSize + 1);
         strcpy_s(newNode->data, newDataSize + 1, data);
         DEBUG_INFO("Exiting __updateData function...\n");
-        return;
+        return newNode->index;
     }
     DEBUG_INFO("Calling __updateDataOrdered...\n");
-    __updateDataOrdered(self, index, data);
+    int newIndex = __updateDataOrdered(self, index, data, inc);
     DEBUG_INFO("Exiting __updateData function...\n");
+    return newIndex;
 }
 // Get the data at the given index - TC O(n)
 char* __getQueue(pQueue self, int index, char* def){
@@ -296,9 +302,14 @@ char* __getHead(pQueue self, char* def){
         DEBUG_INFO("Exiting __getHead function...\n");
         return def;
     }
-    DEBUG_OKAY("Retrieving data inside the head..");
+    DEBUG_OKAY("Retrieving data inside the head...\n");
     DEBUG_INFO("Exiting __getHead function...\n");
     return self->Queue->__head->data;
+}
+// Get the Head's index
+int __getHeadIndex(pQueue self){
+    if(self->Queue->__head == NULL) return -1;
+    return self->Queue->__head->index;
 }
 // Get the data in the tail of the queue - TC O(1)
 char* __getTail(pQueue self, char* def){
@@ -315,21 +326,66 @@ char* __getTail(pQueue self, char* def){
 // Dequeue the head of the queue - TC O(1)
 char* __delHead(pQueue self, char* def){
     DEBUG_INFO("Entered __delHead function (dequeue)\n");
+
+    if(self->Queue->__head == NULL) {
+        DEBUG_ERROR("Queue is empty\n");
+        return def;
+    }
     // Get the data inside the head
     char* retData = __getHead(self, def);
+
     // Check if it is the default value
     if(strcmp(retData, def) == 0) return def;
     self->Queue->__count--;
     // if not retrieve the OG data
     pQueueEntry toBeDeleted = self->Queue->__head;
-    self->Queue->__head->__next->__prev = NULL;
-    self->Queue->__head = self->Queue->__head->__next;
-    toBeDeleted->__next = NULL;
+    if(self->Queue->__head->__next != NULL) {
+        self->Queue->__head->__next->__prev = NULL;
+        self->Queue->__head = self->Queue->__head->__next;
+    } else {
+        // If there's only one node, set both head and tail to NULL
+        self->Queue->__head = NULL;
+        self->Queue->__tail = NULL;
+    }
     // Free the deleted Node from the memory
     free((void*)toBeDeleted);
     DEBUG_OKAY("retrieving the data inside the head...\n");
     DEBUG_INFO("Exiting __delHead (dequeue) function...\n");
     return retData;
+}
+void __delData(pQueue self, int index){
+    DEBUG_INFO("Entered __delData function\n");
+    pQueueEntry toBeDeleted = __QueueFind(self, index);
+    if (toBeDeleted == NULL) return;
+    DEBUG_OKAY("Found a node\n\t\\___ Deleting...\n");
+    // Handle the head of the queue
+    if (toBeDeleted == self->Queue->__head) {
+        self->Queue->__head = toBeDeleted->__next;
+        if (self->Queue->__head != NULL) {
+            self->Queue->__head->__prev = NULL;
+        }
+    }
+
+    // Handle the tail of the queue
+    if (toBeDeleted == self->Queue->__tail) {
+        self->Queue->__tail = toBeDeleted->__prev;
+        if (self->Queue->__tail != NULL) {
+            self->Queue->__tail->__next = NULL;
+        }
+    }
+
+    // Handle a middle node
+    if (toBeDeleted->__next != NULL) {
+        toBeDeleted->__next->__prev = toBeDeleted->__prev;
+    }
+    if (toBeDeleted->__prev != NULL) {
+        toBeDeleted->__prev->__next = toBeDeleted->__next;
+    }
+
+    // Free the node
+    free((void*)toBeDeleted->data);
+    free((void*)toBeDeleted);
+    DEBUG_INFO("Exiting __delData function...\n");
 }
 // Get the size of the queue
 int __sizeQueue(pQueue self){
@@ -349,6 +405,7 @@ void __delQueue(pQueue self){
     }
     DEBUG_OKAY("Deleted the nodes\n\t\\___ Deleting the queue object.\n");
     free((void*)self);
+    self= NULL;
     DEBUG_INFO("Exiting __delQueue function...\n");
 }
 // Function to iterate through the queue - TC O(n)
@@ -395,12 +452,15 @@ pQueue newQueue(){
     newQueue->sizeQueue = &__sizeQueue;
     newQueue->getQueue = &__getQueue;
 
+    newQueue->getHeadIndex = &__getHeadIndex;
     newQueue->getHead = &__getHead;
     newQueue->putHead = &__putHead;
     newQueue->getTail = &__getTail;
 
     newQueue->dequeueData = &__delHead;
     newQueue->enqueueData = &__putTail;
+
+    newQueue->deleteData = &__delData;
 
     newQueue->iterQueue = &__QueueIterate;
     newQueue->dumpQueue = &__QueueDump;
