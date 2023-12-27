@@ -43,18 +43,18 @@ void printMenu() {
     unsigned char mainMenu[] =
             "1 / Insert\n\t\\___ Usage: (1/Insert) <STRING>\n\t\\___ Help: Insert data into the program.\n"
             "2 / Remove\n\t\\___ Usage: (2/Remove) <DEFAULT VALUE TO DISPLAY IN CASE NOT FOUND>\n\t\\___ Help: Display data then Remove it from the program.\n"
-            "3 / modify\n\t\\___ Usage: (3/modify) <INDEX> <STRING>\n\t\\___ Help: Modify existing data or add new one\n"
-            "4 / fetch\n\t\\___ Usage: (4/fetch) <INDEX> <DEFAULT VALUE TO DISPLAY IN CASE NOT FOUND>\n\t\\___ Help: Display data from the program.\n"
-            "5 / PrintData\n\t\\___ Usage: (5/PrintData)\n\t\\___ Help: Display the data inside the program\n"
-            "6 / peekEnd\n\t\\___ Usage: (6/peekEnd) <DEFAULT VALUE TO DISPLAY IN CASE NOT FOUND>\n\t\\___ Help: Display data at the end of the stored data.\n"
-            "7 / peekHead\n\t\\___ Usage: (7/peekHead) <DEFAULT VALUE TO DISPLAY IN CASE NOT FOUND>\n\t\\___ Help: Display the data at the beginning of the stored data.\n"
-            "8 / insertFront\n\t\\___ Usage: (8/InsertFront) <STRING>\n\t\\___ Help: Insert into the beginning of the data.\n"
+            "3 / Modify\n\t\\___ Usage: (3/modify) <INDEX> <STRING>\n\t\\___ Help: Modify existing data or add new one.\n"
+            "4 / Fetch\n\t\\___ Usage: (4/fetch) <INDEX> <DEFAULT VALUE TO DISPLAY IN CASE NOT FOUND>\n\t\\___ Help: Display data from the program.\n"
+            "5 / PrintData\n\t\\___ Usage: (5/PrintData)\n\t\\___ Help: Display the data inside the program.\n"
+            "6 / PeekEnd\n\t\\___ Usage: (6/peekEnd) <DEFAULT VALUE TO DISPLAY IN CASE NOT FOUND>\n\t\\___ Help: Display data at the end of the stored data.\n"
+            "7 / PeekHead\n\t\\___ Usage: (7/peekHead) <DEFAULT VALUE TO DISPLAY IN CASE NOT FOUND>\n\t\\___ Help: Display the data at the beginning of the stored data.\n"
+            "8 / InsertFront\n\t\\___ Usage: (8/InsertFront) <STRING>\n\t\\___ Help: Insert into the beginning of the data.\n"
             "9 / Undo\n\t\\___ Usage (9/Undo)\n\t\\___ Undo the last insert or delete.\n"
             "10 / CountElements\n\t\\___ Usage: (10/CountElements)\n\t\\___ Help: Display the number of the inserted data.\n"
-            "11 /printMenu\n\t\\___ Usage: (11/printMenu)\n\t\\___ Help: Prints the menu.\n"
+            "11 /PrintMenu\n\t\\___ Usage: (11/printMenu)\n\t\\___ Help: Prints the menu.\n"
             "12 / PrintDetails\n\t\\___ Usage: (12/PrintDetails)\n\t\\___ Help: Display Diagnostic data of the program.\n"
             "13 / RemoveAll\n\t\\___ Usage: (13/RemoveAll)\n\t\\___ Help: DELETE EVERYTHING and EXIT.\n"
-            "14 / Exit\n\t\\___ Usage: (14/Exit)\n\t\\___ Help: Exit the application\n";
+            "14 / Exit\n\t\\___ Usage: (14/Exit)\n\t\\___ Help: Exit the application.\n";
 
     printf("%s", ascii_art);
     printf("%s", mainMenu);
