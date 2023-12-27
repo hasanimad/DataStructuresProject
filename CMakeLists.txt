@@ -3,6 +3,8 @@ project(DataStructuresProject C)
 
 set(CMAKE_C_STANDARD 11)
 
+# Enable only if you want to debug the program's operations
+# Warning: Will generate A LOT OF OUTPUT - Literally
 #add_definitions(-DDEBUG)
 
 add_executable(DataStructuresProject main.c
