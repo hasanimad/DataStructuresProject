@@ -18,4 +18,6 @@ void peekHead(char** args,pQueueImpl storedData);
 void insertFront(char** args, pQueueImpl storedData, pActionStack storedActionStack);
 void undoAction(pQueueImpl storedData, pActionStack storedActionStack);
 void countElements(pQueueImpl storedData);
+void printDiagnosticData(pQueueImpl storedData);
+void removeAll(pQueueImpl storedData, pActionStack storedActionStack);
 #endif //DATASTRUCTURESPROJECT_ACTIONUNDOLINK_H

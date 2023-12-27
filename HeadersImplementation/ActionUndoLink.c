@@ -120,3 +120,18 @@ void undoAction(pQueueImpl storedData, pActionStack storedActionStack) {
     free((void*)prevData);
     free((void*)prevAction);
 }
+
+void printDiagnosticData(pQueueImpl self){
+    self->dumpQueue(self);
+}
+void removeAll(pQueueImpl storedData, pActionStack storedActionStack){
+    printf("WARNING\n\t\\__ This will delete everything\n\t\\__ This action is IRREVERSIBLE\n");
+    printf("Are you sure you want to continue? (Y/N)");
+    unsigned char delDataChoice;
+    delDataChoice = getchar();
+    if(delDataChoice == 'Y' || delDataChoice == 'y') {
+        storedData->delQueue(storedData);
+        storedActionStack->delStack(storedActionStack);
+        exit(0);
+    }
+}

@@ -10,13 +10,13 @@
  * (DONE) TODO Check the iterate function, cause it looks wonky
  * (DONE) TODO Implement the Undo Function
  * (DONE) TODO Link the undo function with the Queue
- * TODO Implement the delete function in the Queue
+ * (DONE) TODO Implement the delete function in the Queue
  * (DONE) TODO Implement the numeric Interface for the application
  * TODO Implement the text Interface for the application
+ * TODO Add comments explaining what tf does this code do, sincerely
+ * TODO Cleanup the code and add DEBUG statements all over it
  */
 #include <stdio.h>
-#include <stdlib.h> // clean
-#include <string.h> // clean
 #include "Headers/MainWrapper.h"
 
 
@@ -31,11 +31,6 @@ int main() {
         printf("$> ");
         fgets(userInput, MAX_INPUT - 1, stdin);
     }while(mainWrapper(userInput, storedData, storedActionStack) != 1);
-
-//    printf("Data: %s\n\t\\__", storedActionStack->getTopData(storedActionStack, "Default"));
-//    printf("Index: %d\n\t\\___", storedActionStack->getTopIndex(storedActionStack));
-//    printf("Action: %d\n", storedActionStack->getTopAction(storedActionStack));
-    
     storedData->delQueue(storedData);
     storedActionStack->delStack(storedActionStack);
     return 0;

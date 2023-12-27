@@ -7,10 +7,29 @@
 #include "../Headers/MainWrapper.h"
 #include "../Headers/ActionUndoLink.h"
 
+typedef void (*CommandFunc)(char**, pQueueImpl, pActionStack);
+typedef struct {
+    char* command;
+    CommandFunc func;
+} __CommandMap;
 
-#define IN_LENGTH 13
-#define INDEX_LEN 3
-#define DATA_LEN 1000
+__CommandMap __commandMap[] = {
+        {"insert", &enQueueData},
+        { "remove", &deQueueData},
+        { "modify", &modifyData},
+        {"fetch", (CommandFunc) &getQueueData},
+        {"printdata", (CommandFunc) &iterateQueue},
+        {"peekend", (CommandFunc) &peekEnd},
+        {"peekhead", (CommandFunc) &peekHead},
+        { "insertfront", &insertFront },
+        {"undo", (CommandFunc) &undoAction},
+        {"countelements", (CommandFunc) &countElements},
+        { "printmenu", &printMenu },
+        {"printdetails", (CommandFunc) &printDiagnosticData},
+        {"removeall", (CommandFunc) &removeAll},
+        {NULL, NULL} // Sentinel to mark end of the array
+};
+
 
 void printMenu() {
     unsigned char ascii_art[] =
@@ -22,7 +41,7 @@ void printMenu() {
             "    |__|     |_______|| _| `._____||__|  |__| |__| |__| \\__| /__/     \\__\\ |_______|   |__| \\__|  \\______/      |__|     |_______|| _|    /__/     \\__\\ |_______/ \n"
             "                                                                                                                                                                  \n";
     unsigned char mainMenu[] =
-            "1 / Add\n\t\\___ Usage: (1/Add) <STRING>\n\t\\___ Help: Insert data into the program.\n"
+            "1 / Insert\n\t\\___ Usage: (1/Insert) <STRING>\n\t\\___ Help: Insert data into the program.\n"
             "2 / Remove\n\t\\___ Usage: (2/Remove) <DEFAULT VALUE TO DISPLAY IN CASE NOT FOUND>\n\t\\___ Help: Display data then Remove it from the program.\n"
             "3 / modify\n\t\\___ Usage: (3/modify) <INDEX> <STRING>\n\t\\___ Help: Modify existing data or add new one\n"
             "4 / fetch\n\t\\___ Usage: (4/fetch) <INDEX> <DEFAULT VALUE TO DISPLAY IN CASE NOT FOUND>\n\t\\___ Help: Display data from the program.\n"
@@ -113,7 +132,6 @@ void __numbersMenu(char** args, pQueueImpl storedData, pActionStack storedAction
             break;
 
         case 6:
-            // Implement a wrapper function to get the data then free it
             peekEnd(args, storedData);
             break;
 
@@ -137,18 +155,10 @@ void __numbersMenu(char** args, pQueueImpl storedData, pActionStack storedAction
             printMenu();
             break;
         case 12:
-            storedData->dumpQueue(storedData);
+            printDiagnosticData(storedData);
             break;
         case 13:
-            printf("WARNING\n\t\\__ This will delete everything\n\t\\__ This action is IRREVERSIBLE\n");
-            printf("Are you sure you want to continue? (Y/N)");
-            unsigned char delDataChoice;
-            delDataChoice = getchar();
-            if(delDataChoice == 'Y' || delDataChoice == 'y') {
-                storedData->delQueue(storedData);
-                storedActionStack->delStack(storedActionStack);
-                exit(0);
-            }
+            removeAll(storedData, storedActionStack);
             break;
         default:
             printf("Invalid Input\n");
@@ -157,8 +167,18 @@ void __numbersMenu(char** args, pQueueImpl storedData, pActionStack storedAction
 }
 
 void __textMenu(char** args, pQueueImpl storedData, pActionStack storedActionStack){
+    __toLowerString(args[0]);
 
-}
+    for (int i = 0; __commandMap[i].command != NULL; i++) {
+        if (strcmp(args[0], __commandMap[i].command) == 0) {
+            __commandMap[i].func(args, storedData, storedActionStack);
+            return;
+        }
+    }
+
+    printf("Invalid input\n");
+    }
+
 int mainWrapper(char* userInput, pQueueImpl DataQueue, pActionStack ActionStack){
     char **split;
     int choice;
@@ -174,6 +194,7 @@ int mainWrapper(char* userInput, pQueueImpl DataQueue, pActionStack ActionStack)
             return 1;
         }
         __numbersMenu(split, DataQueue, ActionStack);
+        return 0;
     }
 
     __toLowerString(split[0]);
@@ -181,7 +202,7 @@ int mainWrapper(char* userInput, pQueueImpl DataQueue, pActionStack ActionStack)
         __freeStrings(split, 3);
         return 1;
     }
-
+    __textMenu(split, DataQueue, ActionStack);
 
     return 0;
 }
