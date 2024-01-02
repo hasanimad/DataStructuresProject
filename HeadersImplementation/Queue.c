@@ -237,27 +237,48 @@ int __updateDataOrdered(pQueue self, int index, char* data, bool inc) {
         DEBUG_OKAY("Added the new Node to the head\n");
         return index;
     }
+    // Set the index for the new node
+    newNode->index = index;
+    // Handle if the queue is empty3
+    if(self->Queue->__head == NULL){
+        self->Queue->__head = newNode;
+        self->Queue->__tail = newNode;
+        return index;
+    }
     // Search for the right place to insert the new Node
+    DEBUG_INFO("Finding the right place it insert the node...\n");
     pQueueEntry cur = self->Queue->__head;
     while (cur->__next != NULL && cur->__next->index < index) {
         cur = cur->__next;
     }
+    DEBUG_INFO("Found the right place!!\n\t\\___ cur: 0x%p\n\t\\___ cur->next: 0x%p\n\t\\___ newNode: 0x%p\n\t\\___ head: 0x%p\n\t\\___ Tail: 0x%p\n",
+               cur, cur->__next, newNode, self->Queue->__head, self->Queue->__tail
+               );
     // Once the right node is found, chain them together
     // Linking the newNode next pointer to the node after the current one
+    DEBUG_INFO("Setting the newNode->next to  the current->next...\n");
     newNode->__next = cur->__next;
+    DEBUG_INFO("Values of\n\t\\___ newNode->next: 0x%p\n\t\\___ current->next: 0x%p\n", newNode->__next, cur->__next);
     // check if it is the last node (Avoiding a NULL pointer)
     if (cur->__next != NULL) {
+        DEBUG_INFO("Linking the node in front of the current one..\n");
         // link the previous pointer of the node after the current one to our new node (place it in the middle)
         cur->__next->__prev = newNode;
+
     } else {
+        DEBUG_INFO("No node in front of the current one\n\t\\___ Linking the tail\n");
         // If it is the last node, point the tail to it
         self->Queue->__tail = newNode;
+        DEBUG_INFO("Linked the tail\n");
     }
     // Chain our new Node previous pointer to the current one (Placing it in front of the current one)
     newNode->__prev = cur;
+    DEBUG_INFO("Linked the newNode previous pointer to the current node\n");
     // Finally, link the current node to the new node (placing it in  front of it)
     cur->__next = newNode;
-    DEBUG_OKAY("Linked the new node in it's right place\n\t\\___ Next Node: %d\n\t\\___ Previous Node: %d\n", cur->__next->index, cur->__prev->index);
+    DEBUG_INFO("Linked the current node next pointer to the newNode\n");
+    DEBUG_OKAY("Linked the new node in it's right place\n\t\\___ Current Node: 0x%p\n\t\\___ Next Node: 0x%p\n\t\\___ Previous Node: 0x%p\n",
+               newNode, newNode->__next, newNode->__prev);
     DEBUG_INFO("Exiting __updateDataOrdered function...\n");
     return newNode->index;
 }
