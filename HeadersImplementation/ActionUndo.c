@@ -7,31 +7,33 @@
 #include "../Headers/ActionUndo.h"
 #include  "../Headers/strux.h"
 
-
+// Original Action Class
 struct ActionOG {
     enum actionDone actionDone;
     int index;
     char *data;
     pAction __next;
 };
+// Original ActionStack Class
 struct ActionStack {
     pAction __top;
     int __capacity;
+    int __count;
 };
-
+// Method to retrieve the data from an action
 char *__getActionData(pAction self) {
     return self->action->data;
 
 }
-
+// Method to retrieve the index from an action
 int __getActionIndex(pAction self) {
     return self->action->index;
 }
-
+// Method to retrieve the action type from an action
 enum actionDone __getActionType(pAction self) {
     return self->action->actionDone;
 }
-
+// Method to delete (free) an action from the memory
 void __delAction(pAction self) {
     DEBUG_INFO("Entered __delAction\n");
     free((void *) self->action->data);
@@ -39,24 +41,60 @@ void __delAction(pAction self) {
     free((void *) self);
     DEBUG_INFO("Exiting __delAction...\n");
 }
-
+// Method to print the actionStack
+void __printActionStack(pActionStack self){
+    pAction cur = self->__actionStack->__top;
+    if(cur == NULL) {
+        printf("Stack is empty\n\t\\___ Exiting...\n");
+        return;
+    }
+    while(cur->action->__next != NULL){
+        printf("Location: 0x%p\n\t\\___ Index: %d\n\t\\___ Data: %s\n",
+               cur, cur->getIndex(cur), cur->getData(cur));
+        cur = cur->action->__next;
+    }
+}
+// Method to "push" an action onto the ActionStack
 void __push(pActionStack self, pAction doneAction) {
     DEBUG_INFO("Entered __push function\n");
+    if(self->__actionStack->__count >= self->__actionStack->__capacity){
+        DEBUG_INFO("Action Stack FULL...\n\t\\__ Printing it's contents...\n");
+#ifdef DEBUG
+        __printActionStack(self);
+#endif
+        DEBUG_INFO("Freeing the actionStack...\n");
+        for(pAction cur = self->pop(self); cur != NULL;cur=self->pop(self)){
+            pAction temp = cur;
+            free((void*)temp);
+        }
+        DEBUG_INFO("Printing the stack after freeing it...\n");
+#ifdef DEBUG
+        __printActionStack(self);
+#endif
+    }
+
+    if(self->__actionStack->__top == NULL){
+        self->__actionStack->__top = doneAction;
+        self->__actionStack->__count++;
+        return;
+    }
     doneAction->action->__next = self->__actionStack->__top;
     self->__actionStack->__top = doneAction;
+    self->__actionStack->__count++;
     DEBUG_INFO("Exiting __push function...\n");
 }
-
+// Method to "pop" an action from the ActionStack
 pAction __pop(pActionStack self) {
     DEBUG_INFO("Entered __pop function\n");
     if (self->__actionStack->__top == NULL) return NULL;
     pAction poppedAction = self->__actionStack->__top;
     self->__actionStack->__top = self->__actionStack->__top->action->__next;
     poppedAction->action->__next = NULL;
+    self->__actionStack->__count--;
     DEBUG_INFO("Exiting __pop  function...\n");
     return poppedAction;
 }
-
+// Method to delete (free) stack from the memory
 void __delStack(pActionStack self) {
     DEBUG_INFO("Entered __delStack\n");
     if (self->__actionStack->__top != NULL) {
@@ -75,20 +113,20 @@ void __delStack(pActionStack self) {
     self = NULL;
     DEBUG_INFO("Exiting __delStack...\n");
 }
-
+// Method to get the index of the top action on the stack
 int __getTopIndex(pActionStack self) {
     return self->__actionStack->__top->getIndex(self->__actionStack->__top);
 }
-
+// Method to get the data of the top action on the stack
 char *__getTopData(pActionStack self, char *def) {
     if (self->__actionStack->__top->getData(self->__actionStack->__top) == NULL) return def;
     return self->__actionStack->__top->getData(self->__actionStack->__top);
 }
-
+// Method to get the actionType of the top action on the stack
 enum actionDone __getTopAction(pActionStack self) {
     return self->__actionStack->__top->getAction(self->__actionStack->__top);
 }
-
+// Constructor for the encapsulated Action Class
 pAction newAction(enum actionDone actionType, int index, char *data) {
 
     pAction newAct = (pAction) malloc(sizeof(*newAct));
@@ -111,13 +149,13 @@ pAction newAction(enum actionDone actionType, int index, char *data) {
     newAct->delAction = &__delAction;
     return newAct;
 }
-
+// Constructor for the encapsulated ActionStack class
 pActionStack newActionStack() {
     pActionStack newStack = (pActionStack) malloc(sizeof(*newStack));
     newStack->__actionStack = (pActionStackOG) malloc(sizeof(*(newStack->__actionStack)));
     newStack->__actionStack->__top = NULL;
     newStack->__actionStack->__capacity = 10;
-
+    newStack->__actionStack->__count = 0;
     newStack->getTopAction = &__getTopAction;
     newStack->getTopIndex = &__getTopIndex;
     newStack->getTopData = &__getTopData;

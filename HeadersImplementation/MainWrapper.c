@@ -4,15 +4,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../Headers/MainWrapper.h"
 #include "../Headers/ActionUndoLink.h"
+#include "../Headers/MainWrapper.h"
+#include "../Headers/strux.h"
 
+// Function pointer
 typedef void (*CommandFunc)(char**, pQueueImpl, pActionStack);
+// Map Class {command, functionToCall}
 typedef struct {
     char* command;
     CommandFunc func;
 } __CommandMap;
 
+// Map itself, containing all the keys
 __CommandMap __commandMap[] = {
         {"insert", &enQueueData},
         { "remove", &deQueueData},
@@ -30,7 +34,7 @@ __CommandMap __commandMap[] = {
         {NULL, NULL} // Sentinel to mark end of the array
 };
 
-
+// Print the main menu (Banner included)
 void printMenu() {
     unsigned char ascii_art[] =
             ".___________. _______ .______      .___  ___.  __  .__   __.      ___       __         .__   __.   ______   .___________. _______ .______      ___       _______  \n"
@@ -59,53 +63,62 @@ void printMenu() {
     printf("%s", ascii_art);
     printf("%s", mainMenu);
 }
-
+// Convert a string to lowerCase
 void __toLowerString(char *string) {
+    DEBUG_INFO("Entered __toLowerString function\n");
     for (unsigned char *p = (unsigned char*)string; *p; ++p) *p = *p > 0x40 && *p < 0x5b ? *p | 0x60 : *p;
+    DEBUG_OKAY("Exiting __toLowerString function...\n");
 }
-
+// Helper function to split the user input into 3 parts
 char **__inputSplitter(char *userInput) {
+    DEBUG_INFO("Entered __inputSplitter function\n");
+    DEBUG_INFO("Allocating memory for the split user input...\n");
     char **userInputSplit = malloc(3 * sizeof(char *));
     if (!userInputSplit) return NULL;
-
+    DEBUG_OKAY("Allocated %lld bytes at 0x%p\n", sizeof(userInputSplit), userInputSplit);
     // Initialize to NULL to handle early returns
     for (int i = 0; i < 3; i++) {
         userInputSplit[i] = NULL;
     }
+    DEBUG_INFO("Allocating a temporary buffer for the user input...\n");
     char *tempInput = (char *) malloc(strlen(userInput)+1);
     if (!tempInput) {
         free(userInputSplit);
         return NULL;
     }
     strcpy(tempInput, userInput);
-
+    DEBUG_OKAY("Allocated %lld bytes at 0x%p\n", strlen(userInput)+1, tempInput);
+    DEBUG_INFO("Initializing the token pointer...\n");
     char *token = strtok(tempInput, " ");
+    DEBUG_OKAY("Got the token pointer\n\t\\___ Location: 0x%p\n\t\\___ Data: %s\n", token, token);
     for (int i = 0; i < 3 && token != NULL; i++) {
-
+        DEBUG_INFO("Allocating memory for the %d user input...\n", i+1);
         userInputSplit[i] = malloc(strlen(token) + 1);
-
+        DEBUG_OKAY("Allocated %lld bytes at 0x%p for the %d user input\n", strlen(token)+1, userInputSplit[i], i+1);
         if (!userInputSplit[i]) {
             for (int j = 0; j < i; j++) free(userInputSplit[j]);
             free(userInputSplit);
             free(tempInput);
             return NULL;
         }
-
+        DEBUG_INFO("Copying the data from the token to the user input array...\n");
         strcpy(userInputSplit[i], token);
+        DEBUG_INFO("Getting the new token pointer...\n");
         token = (i < 1) ? strtok(NULL, " ") : strtok(NULL, "\n");
+        DEBUG_OKAY("Got the token pointer\n\t\\___ Location: 0x%p\n\t\\___ Data: %s\n", token, token);
     }
-
+    DEBUG_INFO("Freeing %lld from 0x%p\n", sizeof(*tempInput), tempInput);
     free(tempInput);
+    DEBUG_INFO("Exiting __inputSplitter function...\n");
     return userInputSplit;
 }
-
+// Helper function to free an array of strings
 void __freeStrings(char **strings, int length) {
     if (!strings) return;
     for (int i = 0; i < length; i++) free((void *) strings[i]);
     free((void *) strings);
 }
-
-
+// Helper function to call the right function depending on numerical user input
 void __numbersMenu(char** args, pQueueImpl storedData, pActionStack storedActionStack){
     int choice = strtol(args[0], (char**)NULL, 10);
 
@@ -115,7 +128,6 @@ void __numbersMenu(char** args, pQueueImpl storedData, pActionStack storedAction
             break;
 
         case 2:
-            // Implement a wrapper function to get the data then free it
             deQueueData(args, storedData, storedActionStack);
             break;
 
@@ -165,7 +177,7 @@ void __numbersMenu(char** args, pQueueImpl storedData, pActionStack storedAction
     }
 
 }
-
+// Helper function to call the right function depending on user input
 void __textMenu(char** args, pQueueImpl storedData, pActionStack storedActionStack){
     __toLowerString(args[0]);
 
@@ -178,7 +190,7 @@ void __textMenu(char** args, pQueueImpl storedData, pActionStack storedActionSta
 
     printf("Invalid input\n");
     }
-
+// Encapsulates all the appropriate functions for the running of this program
 int mainWrapper(char* userInput, pQueueImpl DataQueue, pActionStack ActionStack){
     char **split;
     int choice;
