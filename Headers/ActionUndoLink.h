@@ -11,13 +11,13 @@
 void enQueueData(char** args, pQueueImpl storedData, pActionStack storedActionStack);
 void deQueueData(char** args, pQueueImpl storedData, pActionStack storedActionStack);
 void modifyData(char** args, pQueueImpl storedData, pActionStack storedActionStack);
-void getQueueData(char** args, pQueueImpl storedData);
-void iterateQueue(pQueueImpl storedData);
-void peekEnd(char** args, pQueueImpl storedData);
-void peekHead(char** args,pQueueImpl storedData);
+void getQueueData(char** args, pQueueImpl storedData, pActionStack storedActionStack);
+void iterateQueue(char** args, pQueueImpl storedData, pActionStack storedActionStack);
+void peekEnd(char** args, pQueueImpl storedData, pActionStack storedActionStack);
+void peekHead(char** args, pQueueImpl storedData, pActionStack storedActionStack);
 void insertFront(char** args, pQueueImpl storedData, pActionStack storedActionStack);
-void undoAction(pQueueImpl storedData, pActionStack storedActionStack);
-void countElements(pQueueImpl storedData);
-void printDiagnosticData(pQueueImpl storedData);
-void removeAll(pQueueImpl storedData, pActionStack storedActionStack);
+void undoAction(char** args, pQueueImpl storedData, pActionStack storedActionStack);
+void countElements(char** args, pQueueImpl storedData, pActionStack storedActionStack);
+void printDiagnosticData(char** args, pQueueImpl storedData, pActionStack storedActionStack);
+void removeAll(char** args, pQueueImpl storedData, pActionStack storedActionStack);
 #endif //DATASTRUCTURESPROJECT_ACTIONUNDOLINK_H

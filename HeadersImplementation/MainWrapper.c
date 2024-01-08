@@ -73,6 +73,10 @@ void __toLowerString(char *string) {
 char **__inputSplitter(char *userInput) {
     DEBUG_INFO("Entered __inputSplitter function\n");
     DEBUG_INFO("Allocating memory for the split user input...\n");
+    size_t inputLength = strlen(userInput);
+    if (inputLength > 0 && userInput[inputLength - 1] == '\n') {
+        userInput[inputLength - 1] = '\0';
+    }
     char **userInputSplit = malloc(3 * sizeof(char *));
     if (!userInputSplit) return NULL;
     DEBUG_OKAY("Allocated %lld bytes at 0x%p\n", sizeof(userInputSplit), userInputSplit);
@@ -81,7 +85,7 @@ char **__inputSplitter(char *userInput) {
         userInputSplit[i] = NULL;
     }
     DEBUG_INFO("Allocating a temporary buffer for the user input...\n");
-    char *tempInput = (char *) malloc(strlen(userInput)+1);
+    char *tempInput = (char *) malloc(inputLength+1);
     if (!tempInput) {
         free(userInputSplit);
         return NULL;
@@ -136,19 +140,19 @@ void __numbersMenu(char** args, pQueueImpl storedData, pActionStack storedAction
             break;
 
         case 4:
-            getQueueData(args, storedData);
+            getQueueData(args, storedData, storedActionStack);
             break;
 
         case 5:
-            iterateQueue(storedData);
+            iterateQueue(args, storedData, storedActionStack);
             break;
 
         case 6:
-            peekEnd(args, storedData);
+            peekEnd(args, storedData, storedActionStack);
             break;
 
         case 7:
-            peekHead(args, storedData);
+            peekHead(args, storedData, storedActionStack);
             break;
 
         case 8:
@@ -157,20 +161,20 @@ void __numbersMenu(char** args, pQueueImpl storedData, pActionStack storedAction
             break;
 
         case 9:
-            undoAction(storedData, storedActionStack);
+            undoAction(args, storedData, storedActionStack);
             break;
 
         case 10:
-            countElements(storedData);
+            countElements(args, storedData, storedActionStack);
             break;
         case 11:
             printMenu();
             break;
         case 12:
-            printDiagnosticData(storedData);
+            printDiagnosticData(args, storedData, storedActionStack);
             break;
         case 13:
-            removeAll(storedData, storedActionStack);
+            removeAll(args, storedData, storedActionStack);
             break;
         default:
             printf("Invalid Input\n");
@@ -179,8 +183,8 @@ void __numbersMenu(char** args, pQueueImpl storedData, pActionStack storedAction
 }
 // Helper function to call the right function depending on user input
 void __textMenu(char** args, pQueueImpl storedData, pActionStack storedActionStack){
-    __toLowerString(args[0]);
-
+    //__toLowerString(args[0]);
+    DEBUG_INFO("Entered the __textMenu function\n\t\\___ Command: %s\n", args[0]);
     for (int i = 0; __commandMap[i].command != NULL; i++) {
         if (strcmp(args[0], __commandMap[i].command) == 0) {
             __commandMap[i].func(args, storedData, storedActionStack);
@@ -189,6 +193,7 @@ void __textMenu(char** args, pQueueImpl storedData, pActionStack storedActionSta
     }
 
     printf("Invalid input\n");
+    DEBUG_INFO("Exiting __textMenu function...\n");
     }
 // Encapsulates all the appropriate functions for the running of this program
 int mainWrapper(char* userInput, pQueueImpl DataQueue, pActionStack ActionStack){

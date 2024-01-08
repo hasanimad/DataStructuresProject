@@ -74,10 +74,13 @@ void __push(pActionStack self, pAction doneAction) {
     }
 
     if(self->__actionStack->__top == NULL){
+        DEBUG_INFO("Action stack is empty\n\t\\___ Assigning the new action to the top...\n");
         self->__actionStack->__top = doneAction;
         self->__actionStack->__count++;
+        DEBUG_INFO("Exiting __push function...\n");
         return;
     }
+    DEBUG_INFO("Linking the action to the previous actions...\n");
     doneAction->action->__next = self->__actionStack->__top;
     self->__actionStack->__top = doneAction;
     self->__actionStack->__count++;
@@ -128,9 +131,10 @@ enum actionDone __getTopAction(pActionStack self) {
 }
 // Constructor for the encapsulated Action Class
 pAction newAction(enum actionDone actionType, int index, char *data) {
-
+    DEBUG_INFO("Entered newAction function\n");
     pAction newAct = (pAction) malloc(sizeof(*newAct));
     if (!newAct) return NULL;
+    DEBUG_OKAY("Allocated %lld bytes at 0x%p\n", sizeof(*newAct), newAct);
     newAct->action = (pActionOG) malloc(sizeof(*(newAct->action)));
     if (newAct->action == NULL) {
         free((void *) newAct);
@@ -142,25 +146,38 @@ pAction newAction(enum actionDone actionType, int index, char *data) {
     newAct->action->data = (char *) malloc(strlen(data) + 1);
     strcpy(newAct->action->data, data);
     newAct->action->__next = NULL;
-
+    DEBUG_INFO("Copied the action data to the Action\n");
     newAct->getAction = &__getActionType;
     newAct->getData = &__getActionData;
     newAct->getIndex = &__getActionIndex;
     newAct->delAction = &__delAction;
+    DEBUG_INFO("Linked the action methods to the object\n");
+    DEBUG_INFO("Exiting newAction function...\n");
     return newAct;
 }
 // Constructor for the encapsulated ActionStack class
 pActionStack newActionStack() {
+    DEBUG_INFO("Entered newActionStack function\n");
     pActionStack newStack = (pActionStack) malloc(sizeof(*newStack));
+    if(newStack == NULL) return newStack;
+    DEBUG_OKAY("Allocated %lld bytes at 0x%p\n", sizeof(*newStack), newStack);
     newStack->__actionStack = (pActionStackOG) malloc(sizeof(*(newStack->__actionStack)));
+    if(newStack->__actionStack == NULL){
+        free((void*)newStack);
+        return newStack;
+    }
+    DEBUG_OKAY("Allocated %lld bytes at 0x%p for the action stack\n", sizeof(*(newStack->__actionStack)), newStack->__actionStack);
     newStack->__actionStack->__top = NULL;
     newStack->__actionStack->__capacity = 10;
     newStack->__actionStack->__count = 0;
+    DEBUG_OKAY("Initialized the default values\n");
     newStack->getTopAction = &__getTopAction;
     newStack->getTopIndex = &__getTopIndex;
     newStack->getTopData = &__getTopData;
     newStack->push = &__push;
     newStack->pop = &__pop;
     newStack->delStack = &__delStack;
+    DEBUG_OKAY("Linked the methods for the action stack\n");
+    DEBUG_INFO("Exiting the newActionStack function...\n");
     return newStack;
 }

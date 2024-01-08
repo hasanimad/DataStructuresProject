@@ -18,7 +18,6 @@ char *__initializeSingleData(char **args) {
         strcat(data, args[2]);
         return data;
     } else return args[1];
-
 }
 // Wrapper function to enqueue data
 void enQueueData(char **args, pQueueImpl storedData, pActionStack storedActionStack) {
@@ -65,21 +64,21 @@ void modifyData(char **args, pQueueImpl storedData, pActionStack storedActionSta
     storedActionStack->push(storedActionStack, modifyAction);
 }
 // Wrapper function to get data at a certain index
-void getQueueData(char **args, pQueueImpl storedData) {
+void getQueueData(char** args, pQueueImpl storedData, pActionStack storedActionStack) {
     printf("%s\n", storedData->getQueue(storedData, (int) strtol(args[1], NULL, 10), args[2]));
 }
 // Wrapper function to print out the contents of the queue
-void iterateQueue(pQueueImpl storedData) {
+void iterateQueue(char** args, pQueueImpl storedData, pActionStack storedActionStack) {
     storedData->iterQueue(storedData);
 }
 // Wrapper function to peek the end of the queue
-void peekEnd(char **args, pQueueImpl storedData) {
+void peekEnd(char** args, pQueueImpl storedData, pActionStack storedActionStack) {
     char *dataToStore = __initializeSingleData(args);
     printf("%s\n", storedData->getTail(storedData, dataToStore));
     free((void *) dataToStore);
 }
 // Wrapper function to peek the head of the queue
-void peekHead(char **args, pQueueImpl storedData) {
+void peekHead(char** args, pQueueImpl storedData, pActionStack storedActionStack) {
     char *dataToStore = __initializeSingleData(args);
     printf("%s\n", storedData->getHead(storedData, dataToStore));
     free((void *) dataToStore);
@@ -98,11 +97,11 @@ void insertFront(char **args, pQueueImpl storedData, pActionStack storedActionSt
     free((void *) dataToStore);
 }
 // Wrapper function to return the number of elements in the queue
-void countElements(pQueueImpl storedData) {
+void countElements(char** args, pQueueImpl storedData, pActionStack storedActionStack) {
     printf("Number of sentences: %d\n", storedData->sizeQueue(storedData));
 }
 // Wrapper function to undo a certain action
-void undoAction(pQueueImpl storedData, pActionStack storedActionStack) {
+void undoAction(char** args, pQueueImpl storedData, pActionStack storedActionStack) {
 
     pAction prevAction = storedActionStack->pop(storedActionStack);
     if(prevAction == NULL) return;
@@ -123,11 +122,11 @@ void undoAction(pQueueImpl storedData, pActionStack storedActionStack) {
     free((void*)prevAction);
 }
 // Wrapper function to print out diagnostic information about the queue
-void printDiagnosticData(pQueueImpl self){
-    self->dumpQueue(self);
+void printDiagnosticData(char** args, pQueueImpl storedData, pActionStack storedActionStack){
+    storedData->dumpQueue(storedData);
 }
 // Wrapper function to delete everything
-void removeAll(pQueueImpl storedData, pActionStack storedActionStack){
+void removeAll(char** args, pQueueImpl storedData, pActionStack storedActionStack){
     printf("WARNING\n\t\\__ This will delete everything\n\t\\__ This action is IRREVERSIBLE\n");
     printf("Are you sure you want to continue? (Y/N)");
     unsigned char delDataChoice;
