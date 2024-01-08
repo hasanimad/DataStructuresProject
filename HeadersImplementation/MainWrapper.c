@@ -215,7 +215,7 @@ int mainWrapper(char* userInput, pQueueImpl DataQueue, pActionStack ActionStack)
     }
 
     __toLowerString(split[0]);
-    if(strcmp(split[0], "exit\n") == 0){
+    if(strcmp(split[0], "exit") == 0){
         __freeStrings(split, 3);
         return 1;
     }
