@@ -57,10 +57,10 @@ void deQueueData(char **args, pQueueImpl storedData, pActionStack storedActionSt
 // Wrapper function to modify data
 void modifyData(char **args, pQueueImpl storedData, pActionStack storedActionStack) {
     pAction modifyAction;
+    int index = (int) strtol(args[1], NULL, 10);
+    modifyAction = newAction(MODIFY, index, storedData->getQueue(storedData, index, "Default value"));
+    storedData->updateData(storedData, index, args[2], true);
 
-    storedData->updateData(storedData, (int) strtol(args[1], NULL, 10), args[2], true);
-
-    modifyAction = newAction(MODIFY, (int) strtol(args[1], NULL, 10), args[2]);
     storedActionStack->push(storedActionStack, modifyAction);
 }
 // Wrapper function to get data at a certain index
@@ -115,7 +115,7 @@ void undoAction(char** args, pQueueImpl storedData, pActionStack storedActionSta
             storedData->updateData(storedData, prevIndex, prevData, false);
             break;
         case MODIFY:
-
+            storedData->updateData(storedData, prevIndex, prevData, false);
             break;
     }
     free((void*)prevData);
