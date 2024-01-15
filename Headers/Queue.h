@@ -6,7 +6,7 @@
 #define DATASTRUCTURESPROJECT_QUEUE_H
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "bugprone-reserved-identifier"
-#include <stdbool.h>
+
 
 
 
@@ -24,7 +24,7 @@ typedef struct QueueImplementation{
     // Iterate the queue printing out all the elements in FIFO order
     void (*iterQueue)(struct QueueImplementation* self);
     // Update data at the given index in the queue
-    int (*updateData)(struct QueueImplementation* self, int index, char* data, bool inc);
+    void (*updateData)(struct QueueImplementation* self, int index, char* data);
     // Get the data at the given index
     char* (*getQueue)(struct QueueImplementation* self, int index, char* def);
     // Get the data at the front of the queue
@@ -32,11 +32,11 @@ typedef struct QueueImplementation{
     // Get the Head's index
     int (*getHeadIndex)(struct QueueImplementation* self);
     // Insert data at the beginning of the queue
-    int (*putHead)(struct QueueImplementation* self, char* data, bool inc);
+    void (*putHead)(struct QueueImplementation* self, char* data);
     // Get the data at the end of the queue
     char* (*getTail)(struct QueueImplementation* self, char* def);
     // Add data to the queue
-    int (*enqueueData)(struct QueueImplementation* self, char* data);
+    void (*enqueueData)(struct QueueImplementation* self, char* data);
     // Get the data at the end of the queue then free it (Don't forget to free the dequeued data)
     char* (*dequeueData)(struct QueueImplementation* self, char* def);
     // Delete data at a given index

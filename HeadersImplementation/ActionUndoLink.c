@@ -26,10 +26,10 @@ void enQueueData(char **args, pQueueImpl storedData, pActionStack storedActionSt
 
     dataToStore = __initializeSingleData(args);
     if (!dataToStore) return;
-
+    storedData->enqueueData(storedData,dataToStore);
     enqueueAction = newAction(
             INSERT,
-            storedData->enqueueData(storedData, dataToStore),
+            0,
             dataToStore
     );
 
@@ -59,7 +59,7 @@ void modifyData(char **args, pQueueImpl storedData, pActionStack storedActionSta
     pAction modifyAction;
     int index = (int) strtol(args[1], NULL, 10);
     modifyAction = newAction(MODIFY, index, storedData->getQueue(storedData, index, "Default value"));
-    storedData->updateData(storedData, index, args[2], true);
+    storedData->updateData(storedData, index, args[2]);
 
     storedActionStack->push(storedActionStack, modifyAction);
 }
@@ -90,8 +90,8 @@ void insertFront(char **args, pQueueImpl storedData, pActionStack storedActionSt
 
     dataToStore = __initializeSingleData(args);
     if (!dataToStore) return;
-
-    insertAction = newAction(INSERT, storedData->putHead(storedData, dataToStore, true), dataToStore);
+    storedData->putHead(storedData, dataToStore);
+    insertAction = newAction(INSERT, 0, dataToStore);
 
     storedActionStack->push(storedActionStack, insertAction);
     free((void *) dataToStore);
@@ -112,12 +112,11 @@ void undoAction(char** args, pQueueImpl storedData, pActionStack storedActionSta
             storedData->deleteData(storedData, prevIndex);
             break;
         case DELETE:
-            storedData->updateData(storedData, prevIndex, prevData, false);
-            break;
+            storedData->putHead(storedData, prevData);
         case MODIFY:
-            storedData->updateData(storedData, prevIndex, prevData, false);
+            storedData->updateData(storedData, prevIndex, prevData);
             break;
-    }
+        }
     free((void*)prevData);
     free((void*)prevAction);
 }
