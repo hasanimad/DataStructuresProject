@@ -318,11 +318,6 @@ char* __getHead(pQueue self, char* def){
     DEBUG_INFO("Exiting __getHead function...\n");
     return self->Queue->__head->data;
 }
-// Get the Head's index
-int __getHeadIndex(pQueue self){
-    if(self->Queue->__head == NULL) return -1;
-    return 0;
-}
 // Get the data in the tail of the queue - TC O(1)
 char* __getTail(pQueue self, char* def){
     DEBUG_INFO("Entered __getTail function\n");
