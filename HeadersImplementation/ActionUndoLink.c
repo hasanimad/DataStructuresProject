@@ -45,12 +45,10 @@ void deQueueData(char **args, pQueueImpl storedData, pActionStack storedActionSt
     pAction dequeueAction;
 
     dataToStore = __initializeSingleData(args);
-    headIndex = storedData->getHeadIndex(storedData);
     temp = storedData->dequeueData(storedData, dataToStore);
-    if (headIndex != -1) {
-        dequeueAction = newAction(DELETE, headIndex, temp);
-        storedActionStack->push(storedActionStack, dequeueAction);
-    }
+    dequeueAction = newAction(DELETE, 0, temp);
+    storedActionStack->push(storedActionStack, dequeueAction);
+
     printf("%s\n", temp);
     free((void *) temp);
 }

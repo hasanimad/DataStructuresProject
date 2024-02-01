@@ -29,8 +29,6 @@ typedef struct QueueImplementation{
     char* (*getQueue)(struct QueueImplementation* self, int index, char* def);
     // Get the data at the front of the queue
     char* (*getHead)(struct QueueImplementation* self, char* def);
-    // Get the Head's index
-    int (*getHeadIndex)(struct QueueImplementation* self);
     // Insert data at the beginning of the queue
     void (*putHead)(struct QueueImplementation* self, char* data);
     // Get the data at the end of the queue

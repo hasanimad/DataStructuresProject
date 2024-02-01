@@ -169,7 +169,7 @@ void __QueueDump(pQueue self){
     DEBUG_INFO("Exiting __QueueDump...\n");
 }
 
-// Add a node to the head of the queue - Time Complexity O(n)
+// Add a node to the head of the queue - Time Complexity O(1)
 void __putHead(pQueue self, char* data){
     DEBUG_INFO("Entered __putHead function\n");
     // Initialize the new node
@@ -243,6 +243,7 @@ void __updateDataOrdered(pQueue self, int index, char* data) {
     pQueueEntry cur = self->Queue->__head;
     while (cur->__next != NULL && count < index) {
         cur = cur->__next;
+        count++;
     }
     DEBUG_INFO("Found the right place!!\n\t\\___ cur: 0x%p\n\t\\___ cur->next: 0x%p\n\t\\___ newNode: 0x%p\n\t\\___ head: 0x%p\n\t\\___ Tail: 0x%p\n",
                cur, cur->__next, newNode, self->Queue->__head, self->Queue->__tail
@@ -461,7 +462,6 @@ pQueue newQueue(){
     newQueue->sizeQueue = &__sizeQueue;
     newQueue->getQueue = &__getQueue;
 
-    newQueue->getHeadIndex = &__getHeadIndex;
     newQueue->getHead = &__getHead;
     newQueue->putHead = &__putHead;
     newQueue->getTail = &__getTail;

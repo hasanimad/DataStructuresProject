@@ -184,7 +184,7 @@ void __numbersMenu(char** args, pQueueImpl storedData, pActionStack storedAction
 // Helper function to call the right function depending on user input
 void __textMenu(char** args, pQueueImpl storedData, pActionStack storedActionStack){
     //__toLowerString(args[0]);
-    DEBUG_INFO("Entered the __textMenu function\n\t\\___ Command: %s\n", args[0]);
+    DEBUG_INFO("Entered _textMenu function\n\t\\___ Command: %s\n", args[0]);
     for (int i = 0; __commandMap[i].command != NULL; i++) {
         if (strcmp(args[0], __commandMap[i].command) == 0) {
             __commandMap[i].func(args, storedData, storedActionStack);
